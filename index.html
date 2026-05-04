@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widderpumpen-Rechner</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5dc;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #eef0f1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 380px;
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #334e68;
+            font-size: 20px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #334e68;
+            margin-top: 16px;
+            font-size: 18px;
+        }
+
+        h3 {
+            color: #334e68;
+            font-size: 16px;
+            margin: 0 0 10px;
+        }
+
+        h4 {
+            color: #334e68;
+            font-size: 14px;
+            margin: 14px 0 6px;
+            text-align: left;
+            border-bottom: 1px solid #c9d0d6;
+            padding-bottom: 4px;
+        }
+
+        label {
+            color: #334e68;
+            font-size: 14px;
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
+
+        button {
+            background-color: #334e68;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #2b3e50;
+        }
+
+        .pump-card {
+            background-color: #ffffff;
+            border: 1px solid #d2d8dd;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .result-box {
+            background-color: #ffffff;
+            border: 1px solid #d2d8dd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        #result, #resultDay {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .sub-result {
+            font-size: 13px;
+            color: #334e68;
+            margin: 5px 0;
+        }
+
+        .logo {
+            margin-top: 20px;
+            max-width: 150px;
+            pointer-events: none;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+            display: none;
+            font-size: 13px;
+            margin: 5px 0;
+            text-align: left;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: #555;
+            margin-top: 10px;
+            line-height: 1.35;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #666;
+            text-align: left;
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Widderpumpen-Rechner</h1>
+
+        <form id="pumpForm">
+            <label for="mode">Anzahl der Widder:</label>
+            <select id="mode" onchange="toggleSecondPump()">
+                <option value="single" selected>Ein Widder</option>
+                <option value="double">Zwei Widder</option>
+            </select>
+
+            <div class="pump-card">
+                <h3>Widder A</h3>
+
+                <h4>Antrieb</h4>
+                <label for="hfall1">Fallhöhe (m):</label>
+                <input type="number" id="hfall1" step="0.1" value="10" required>
+
+                <label for="driveLength1">Triebleitungslänge (m):</label>
+                <input type="number" id="driveLength1" step="0.1" value="25" required>
+
+                <label for="driveDiameter1">Triebleitung Ø innen (mm) <span>(max. 80 mm)</span>:</label>
+                <input type="number" id="driveDiameter1" step="1" value="50" max="80" required>
+                <p id="warning1" class="warning">Der Rohrdurchmesser darf nicht größer als 80 mm sein!</p>
+
+                <h4>Förderseite</h4>
+                <label for="deliveryPipe1">Förderleitung Ø innen:</label>
+                <select id="deliveryPipe1">
+                    <option value="0.42" selected>Ø 13 mm – hoher Leitungsverlust</option>
+                    <option value="0.58">Ø 19 mm – mittlerer Leitungsverlust</option>
+                    <option value="1.00">Ø 25 mm – geringer Leitungsverlust</option>
+                </select>
+
+                <label for="hlift1">Förderhöhe / Hubhöhe (m):</label>
+                <input type="number" id="hlift1" step="0.1" value="22" required>
+            </div>
+
+            <div id="secondPumpBlock" class="pump-card">
+                <h3>Widder B</h3>
+
+                <h4>Antrieb</h4>
+                <label for="hfall2">Fallhöhe (m):</label>
+                <input type="number" id="hfall2" step="0.1" value="8" required>
+
+                <label for="driveLength2">Triebleitungslänge (m):</label>
+                <input type="number" id="driveLength2" step="0.1" value="20" required>
+
+                <label for="driveDiameter2">Triebleitung Ø innen (mm) <span>(max. 80 mm)</span>:</label>
+                <input type="number" id="driveDiameter2" step="1" value="50" max="80" required>
+                <p id="warning2" class="warning">Der Rohrdurchmesser darf nicht größer als 80 mm sein!</p>
+
+                <h4>Förderseite</h4>
+                <label for="deliveryPipe2">Förderleitung Ø innen:</label>
+                <select id="deliveryPipe2">
+                    <option value="0.42" selected>Ø 13 mm – hoher Leitungsverlust</option>
+                    <option value="0.58">Ø 19 mm – mittlerer Leitungsverlust</option>
+                    <option value="1.00">Ø 25 mm – geringer Leitungsverlust</option>
+                </select>
+
+                <label for="hlift2">Förderhöhe / Hubhöhe (m):</label>
+                <input type="number" id="hlift2" step="0.1" value="22" required>
+            </div>
+
+            <p class="note">
+                Die Berechnung basiert auf einer Energie-Näherung und wurde über vorhandene Messwerte praxisnah korrigiert.
+            </p>
+
+            <button type="button" onclick="calculateWater()">Berechnen</button>
+        </form>
+
+        <div class="result-box">
+            <h2>Ergebnis: <span id="result">--</span> l/min</h2>
+            <h2>Tagesmenge: <span id="resultDay">--</span> m³/Tag</h2>
+            <p class="sub-result">Widder A: <span id="resultPump1">--</span> l/min</p>
+            <p class="sub-result" id="pump2ResultLine">Widder B: <span id="resultPump2">--</span> l/min</p>
+            <p class="sub-result">Antriebswasser je Widder: <span id="driveWater">1,50</span> l/s</p>
+            <p class="sub-result">Triebleitungsfaktor A: <span id="factorDrive1">--</span></p>
+            <p class="sub-result" id="factorDrive2Line">Triebleitungsfaktor B: <span id="factorDrive2">--</span></p>
+            <p class="sub-result">Max. Förderhöhe A: <span id="maxLift1">--</span> m</p>
+            <p class="sub-result" id="maxLift2Line">Max. Förderhöhe B: <span id="maxLift2">--</span> m</p>
+        </div>
+
+        <p class="disclaimer">
+            Diese Fördermenge ist ein Richtwert und hängt von diversen Faktoren ab, wie Installation, Ventileinstellung, Luftpolster und Rohrleitungsverlusten. Aus diesem Grund kann beim Kauf dieses Produkts keine Garantie auf die effektive Fördermenge gewährleistet werden.
+        </p>
+
+        <img src="https://www.dropbox.com/scl/fi/kwt2ys3vmh6e9br2i1n3j/Logo-Original-mit-Hintergrund.png?rlkey=6m9c4ihnx34ne2lz5cktfoz2c&e=1&st=rffgmqn0&dl=1" alt="Logo-Original" class="logo">
+    </div>
+
+    <script>
+        // Interner Praxiswert, über reale Messungen kalibriert.
+        const efficiency = 0.93;
+
+        // Antriebswasser je Widder.
+        const qInLitersPerSecond = 1.5;
+        const qInCubicMetersPerSecond = qInLitersPerSecond / 1000;
+
+        function toggleSecondPump() {
+            const mode = document.getElementById('mode').value;
+            const showSecond = mode === 'double';
+
+            document.getElementById('secondPumpBlock').style.display = showSecond ? 'block' : 'none';
+            document.getElementById('pump2ResultLine').style.display = showSecond ? 'block' : 'none';
+            document.getElementById('factorDrive2Line').style.display = showSecond ? 'block' : 'none';
+            document.getElementById('maxLift2Line').style.display = showSecond ? 'block' : 'none';
+        }
+
+        function drivePipeFactor(driveLength, fallHeight) {
+            if (driveLength <= 0 || fallHeight <= 0) {
+                return 0;
+            }
+
+            const optimalLength = fallHeight * 3;
+            const ratio = driveLength / optimalLength;
+
+            if (ratio < 0.50) return 0.75;
+            if (ratio < 0.75) return 0.90;
+            if (ratio <= 1.50) return 1.00;
+            if (ratio <= 3.00) return 0.95;
+            return 0.85;
+        }
+
+        function validateDriveDiameter(value, warningId) {
+            const warningElement = document.getElementById(warningId);
+
+            if (isNaN(value) || value <= 0) {
+                warningElement.textContent = 'Bitte einen gültigen Triebleitungsdurchmesser eingeben!';
+                warningElement.style.display = 'block';
+                return false;
+            }
+
+            if (value > 80) {
+                warningElement.textContent = 'Der Rohrdurchmesser darf nicht größer als 80 mm sein!';
+                warningElement.style.display = 'block';
+                return false;
+            }
+
+            warningElement.style.display = 'none';
+            return true;
+        }
+
+        function calculatePump(fallHeight, liftHeight, driveLength, deliveryFactor) {
+            if (fallHeight <= 0 || liftHeight <= 0 || driveLength <= 0) {
+                return {
+                    litersPerMinute: 0,
+                    driveFactor: 0,
+                    maxLift: 0,
+                    pressureBar: 0
+                };
+            }
+
+            const driveFactor = drivePipeFactor(driveLength, fallHeight);
+
+            // Druckabschätzung aus deiner Messung:
+            // 10 m Fallhöhe ergeben ca. 22 bar.
+            // Daraus folgt näherungsweise: 2,2 bar pro Meter Fallhöhe.
+            // 1 bar entspricht ungefähr 10 m Wassersäule.
+            const pressureBarRaw = fallHeight * 2.2;
+
+            // Sicherheits-/Bauteilgrenze: maximal 40 bar.
+            const pressureBar = Math.min(pressureBarRaw, 40);
+
+            // Maximale Förderhöhe aus Druck und mechanischer Begrenzung.
+            // Zusätzlich: deine Angabe maximal ca. 350 m Förderhöhe.
+            const maxLiftFromPressure = pressureBar * 10;
+            const maxLift = Math.min(maxLiftFromPressure, 350);
+
+            // Wenn die Förderhöhe über der möglichen Maximalhöhe liegt,
+            // kommt oben nichts mehr an.
+            if (liftHeight >= maxLift) {
+                return {
+                    litersPerMinute: 0,
+                    driveFactor: driveFactor,
+                    maxLift: maxLift,
+                    pressureBar: pressureBar
+                };
+            }
+
+            // Grundrechnung über Energie-Näherung.
+            const qOut = qInCubicMetersPerSecond * (fallHeight / liftHeight) * efficiency;
+
+            // Im oberen Druckbereich nimmt die reale Fördermenge zusätzlich ab.
+            // Bis 70 % der Maximalhöhe bleibt der Faktor 1, danach fällt er linear auf 0.
+            const loadRatio = liftHeight / maxLift;
+            let pressureFactor = 1;
+
+            if (loadRatio > 0.70) {
+                pressureFactor = (1 - loadRatio) / 0.30;
+            }
+
+            pressureFactor = Math.max(0, Math.min(1, pressureFactor));
+
+            const correctedQOut = qOut * driveFactor * deliveryFactor * pressureFactor;
+
+            return {
+                litersPerMinute: correctedQOut * 1000 * 60,
+                driveFactor: driveFactor,
+                maxLift: maxLift,
+                pressureBar: pressureBar
+            };
+        }
+
+        function calculateWater() {
+            const mode = document.getElementById('mode').value;
+
+            const driveDiameter1 = parseFloat(document.getElementById('driveDiameter1').value);
+            const valid1 = validateDriveDiameter(driveDiameter1, 'warning1');
+
+            let valid2 = true;
+            if (mode === 'double') {
+                const driveDiameter2 = parseFloat(document.getElementById('driveDiameter2').value);
+                valid2 = validateDriveDiameter(driveDiameter2, 'warning2');
+            }
+
+            if (!valid1 || !valid2) {
+                resetResults();
+                return;
+            }
+
+            const fallHeight1 = parseFloat(document.getElementById('hfall1').value);
+            const driveLength1 = parseFloat(document.getElementById('driveLength1').value);
+            const deliveryFactor1 = parseFloat(document.getElementById('deliveryPipe1').value);
+            const liftHeight1 = parseFloat(document.getElementById('hlift1').value);
+
+            const pump1 = calculatePump(fallHeight1, liftHeight1, driveLength1, deliveryFactor1);
+
+            let pump2 = {
+                litersPerMinute: 0,
+                driveFactor: 0,
+                maxLift: 0,
+                pressureBar: 0
+            };
+
+            if (mode === 'double') {
+                const fallHeight2 = parseFloat(document.getElementById('hfall2').value);
+                const driveLength2 = parseFloat(document.getElementById('driveLength2').value);
+                const deliveryFactor2 = parseFloat(document.getElementById('deliveryPipe2').value);
+                const liftHeight2 = parseFloat(document.getElementById('hlift2').value);
+
+                pump2 = calculatePump(fallHeight2, liftHeight2, driveLength2, deliveryFactor2);
+            }
+
+            const totalLitersPerMinute = pump1.litersPerMinute + pump2.litersPerMinute;
+            const totalCubicMetersPerDay = totalLitersPerMinute * 60 * 24 / 1000;
+
+            document.getElementById('result').textContent = totalLitersPerMinute.toFixed(2);
+            document.getElementById('resultDay').textContent = totalCubicMetersPerDay.toFixed(2);
+            document.getElementById('resultPump1').textContent = pump1.litersPerMinute.toFixed(2);
+            document.getElementById('resultPump2').textContent = pump2.litersPerMinute.toFixed(2);
+            document.getElementById('driveWater').textContent = qInLitersPerSecond.toFixed(2).replace('.', ',');
+            document.getElementById('factorDrive1').textContent = pump1.driveFactor.toFixed(2);
+            document.getElementById('factorDrive2').textContent = pump2.driveFactor.toFixed(2);
+            document.getElementById('maxLift1').textContent = pump1.maxLift.toFixed(0);
+            document.getElementById('maxLift2').textContent = pump2.maxLift.toFixed(0);
+        }
+
+        function resetResults() {
+            document.getElementById('result').textContent = '--';
+            document.getElementById('resultDay').textContent = '--';
+            document.getElementById('resultPump1').textContent = '--';
+            document.getElementById('resultPump2').textContent = '--';
+            document.getElementById('driveWater').textContent = qInLitersPerSecond.toFixed(2).replace('.', ',');
+            document.getElementById('factorDrive1').textContent = '--';
+            document.getElementById('factorDrive2').textContent = '--';
+            document.getElementById('maxLift1').textContent = '--';
+            document.getElementById('maxLift2').textContent = '--';
+        }
+
+        toggleSecondPump();
+    </script>
+</body>
+</html>
